@@ -30,6 +30,21 @@ async function run() {
             res.send(products);
         });
 
+        app.get('/addingItem', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const cursor = productCollection.find(query);
+            const myProducts = await cursor.toArray();
+            res.send(myProducts);
+        });
+
+        app.delete('/addingItem/:id', async(req,res) =>{
+            const id = req.params.id;
+            const query ={_id: ObjectId(id)};
+            const result = await productCollection.deleteOne(query);
+            res.send(result);
+        })
+
         app.post('/products', async (req, res) => {
             const product = req.body;
             const result = await productCollection.insertOne(product);
