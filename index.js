@@ -17,52 +17,65 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-async function run(){
-    try{
-       await client.connect();
+async function run() {
+    try {
+        await client.connect();
 
-       const productCollection = client.db('gymEquipment').collection('product');
+        const productCollection = client.db('gymEquipment').collection('product');
 
-       app.get('/products', async (req,res) =>{
-           const query = {};
-           const cursor = productCollection.find(query);
-           const products = await cursor.toArray();
-           res.send(products);
-       });
+        app.get('/products', async (req, res) => {
+            const query = {};
+            const cursor = productCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+        });
 
-       app.get('/products/:id', async (req, res) =>{
-           const id = req.params.id;
-           const query = {_id: ObjectId(id)};
-           const product = await productCollection.findOne(query);
-           res.send(product);
-       });
-      
-       app.put('/products/:id', async (req,res) =>{
-           const id = req.params.id;
-           const newQuantity= req.body.quantity;
-           const filter = {_id: ObjectID(id)}
-           const options = { upsert: true };
-           const updateDoc = {
-            $set: {
-                quantity: newQuantity
-            },
-          };
-           const result = await productCollection.updateOne(filter,updateDoc,options)
-           res.send(result);
-       });
+        app.post('/products', async (req, res) => {
+            const product = req.body;
+            const result = await productCollection.insertOne(product);
+            res.send(result)
+        })
+
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const product = await productCollection.findOne(query);
+            res.send(product);
+        });
+
+        app.put('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const newQuantity = req.body.quantity;
+            const filter = { _id: ObjectID(id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    quantity: newQuantity
+                },
+            };
+            const result = await productCollection.updateOne(filter, updateDoc, options)
+            res.send(result);
+        });
+
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
+            res.send(result);
+        })
 
     }
-    finally{
+    finally {
         // await client.close();
     }
 }
 
 run().catch(console.dir);
 
-app.get('/', (req, res) =>{
+app.get('/', (req, res) => {
     res.send('Fitness Store server is running')
 });
 
-app.listen(port, () =>{
-    console.log('Listening on port',port)
+app.listen(port, () => {
+    console.log('Listening on port', port)
 })
