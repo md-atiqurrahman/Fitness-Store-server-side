@@ -34,7 +34,7 @@ async function run(){
            const query = {_id: ObjectId(id)};
            const product = await productCollection.findOne(query);
            res.send(product);
-       })
+       });
 
 
     }
