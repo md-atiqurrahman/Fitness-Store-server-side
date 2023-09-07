@@ -29,8 +29,8 @@ To set up and run the Fitness Store Backend locally, follow these steps:
 
 4. Create a .env file in the root directory and configure it with the necessary environment variables. Here's an example:
 
-MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
+  * MONGODB_URI=your_mongodb_uri
+  * JWT_SECRET=your_jwt_secret
 
 5. Start the backend server with `npm start`.
 
